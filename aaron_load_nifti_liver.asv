@@ -20,7 +20,7 @@ data.liver_mask = data.liver_mask>0;
 % We check if a "tumor2" file exists, otherwise use tumor1.
 f=dir(fullfile([dest, patient, segs_dir], '**/*tumor2.ids'));
 
-if ~isempty(f)
+if isempty(f)
     data.tumor_mask = get_mask([f.folder, '/', f.name], N1,N2,N3);
 else
     f=dir(fullfile([dest, patient, segs_dir], '**/*tumor*.ids'));
@@ -29,16 +29,15 @@ end
 data.tumor_mask = data.tumor_mask > 0;
 
 % See if there is an automatic tumor mask.
-f=dir(fullfile([dest, patient, segs_dir], '**/Autom*liver.ids'));
-if ~isempty(f)
-    data.automatic_liver_mask = get_mask([f.folder, '/', f.name], N1,N2,N3);
+f=dir(fullfile([dest, patient, segs_dir], '**/*tumor*.ids'));
+if exist([dest, patient, segs_dir, '/Autom_liver.ids'], 'file') == 2
+    data.automatic_liver_mask = get_mask([dest, patient, segs_dir, '/Autom_liver.ids'], N1,N2,N3);
     data.automatic_liver_mask = data.automatic_liver_mask > 0;
 end
 
 % See if there is a 70s automatic tumor mask.
-f=dir(fullfile([dest, patient, segs_dir], '**/Autom*liver*70s.ids'));
-if ~isempty(f)
-    data.automatic_liver_mask_70 = get_mask([f.folder, '/', f.name], N1,N2,N3);
+if exist([dest, patient, segs_dir, '/Autom_liver_70s.ids'], 'file') == 2
+    data.automatic_liver_mask_70 = get_mask([dest, patient, segs_dir, '/Autom_liver_70s.ids'], N1,N2,N3);
     data.automatic_liver_mask_70 = data.automatic_liver_mask_70 > 0;
 end
 
