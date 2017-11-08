@@ -10,7 +10,7 @@ A = fscanf(fileID,'%c');
 ics_text = replace(A, A(regexp(A, '\nfilename')+1:regexp(A, '.ids')+3),...
     [sprintf('filename\t'), pwd(), '\', ids_filename]);
 
-fileID = fopen('enhancingtumor.ics','w');
+fileID = fopen('enhancing_tumor.ics','w');
 fwrite(fileID, ics_text);
 
 enh_mask = transpose_mask_slices(enh_mask, 'w');

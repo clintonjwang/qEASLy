@@ -19,7 +19,7 @@ function [tumor_volume, enhancing_volume, enh_mask] = get_enhance_vol(pre,...
     tumor_voxels = ~isnan(diff);
     tumor_voxel_values = diff(tumor_voxels);
     passing_cutoff = tumor_voxel_values >= cutoff;
-    enh_mask = diff >= cutoff;
+    enh_mask = diff >= cutoff & ~isnan(diff);
     
     single_voxel_volume = dimension(2) * dimension(3) * dimension(4) / 1000.0;
     enhancing_volume = sum(passing_cutoff(:)) * single_voxel_volume;
