@@ -1,16 +1,16 @@
 function [result, status] = python(varargin)
-%PERL Execute Perl command and return the result.
-%   PERL(PERLFILE) calls python script specified by the file PERLFILE
+%PYTHON Execute Perl command and return the result.
+%   PYTHON(PYTHONFILE) calls python script specified by the file PYTHONFILE
 %   using appropriate python executable.
 %
-%   PERL(PERLFILE,ARG1,ARG2,...) passes the arguments ARG1,ARG2,...
-%   to the python script file PERLFILE, and calls it by using appropriate
+%   PYTHON(PYTHONFILE,ARG1,ARG2,...) passes the arguments ARG1,ARG2,...
+%   to the python script file PYTHONFILE, and calls it by using appropriate
 %   python executable.
 %
-%   RESULT=PERL(...) outputs the result of attempted python call.  If the
+%   RESULT=PYTHON(...) outputs the result of attempted python call.  If the
 %   exit status of python is not zero, an error will be returned.
 %
-%   [RESULT,STATUS] = PERL(...) outputs the result of the python call, and
+%   [RESULT,STATUS] = PYTHON(...) outputs the result of the python call, and
 %   also saves its exit status into variable STATUS.
 %
 %   If the Perl executable is not available, it can be downloaded from:

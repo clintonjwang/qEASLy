@@ -1,7 +1,8 @@
 % Given an arterial phase, a pre-contrast phase, a liver tumor mask and a
 % threshold, this function returns the volume of tumor that passes the
 % threshold.
-function [tumor_volume, enhancing_volume] = qeasly_enhancing_tumor_volume(pre, art, tumor_mask, dimension, intensity_mode, mode_std, draw, out_file_name, slice)
+function [tumor_volume, enhancing_volume] = get_enhance_vol(pre,...
+    art, tumor_mask, dimension, intensity_mode, mode_std, draw, out_file_name, slice)
 
     % First, calculate the intensity difference image.
     %diff = (art - pre) ./ (pre + 1);
