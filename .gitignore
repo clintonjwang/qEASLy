@@ -1,5 +1,6 @@
-*/*
+data/*
 *.pdf
 *.doc
 *.docx
 *.asv
+*.txt
