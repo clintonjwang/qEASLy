@@ -16,6 +16,5 @@ for count=1:length(i)
     mask(i(count),j(count),k(count))=1;
 end
 
-mask = transpose_mask_slices(mask);
-
+mask = transpose_mask_slices(mask, 'r');
 return

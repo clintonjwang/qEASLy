@@ -9,11 +9,14 @@ end
 
 f=dir(fullfile(path, pattern));
 
-if ~isempty(f)
-    output_path = [f.folder, '/', f.name];
+if length(f) == 1
+    output_path = [f.folder, '\', f.name];
 else
-    [fname,path] = uigetfile(allowed_extensions, msg);
-    output_path = [path,fname];
+    cwd=pwd();
+    cd(path);
+    [fname,outpath] = uigetfile(allowed_extensions, msg);
+    output_path = [outpath,fname];
+    cd(cwd);
 end
 end
 

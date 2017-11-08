@@ -1,79 +1,22 @@
-function [volDat, volLabels, jsonVolInfo] = read_ISD_series(varargin)
+function [pre, art, liver_mask, tumor_mask] = read_ISD_series(varargin)
 
-% set default for server URL
-ServerAddress = '172.23.202.191';          % ISD instance at Yale
-
-% initialize API key to identfy if value was set by command line argument;
-% otherwise, key defined for the server matching one of the above list will
-% be used.
-myApiKey = [];
-
-% process variable argument list
-% argIdx = 1;
-% optargin = size(varargin,2);
-% while argIdx <= optargin
-%     optionName = varargin{argIdx}; % retrieve the option name from argument list
-%     if any(strcmp(optionName,{'-h', '--help'}))
-%         fprintf('USAGE:\n%s [-h|--help] [-s|--server server] [-k|--key API key]\n', ...
-%             mfilename);
-%         fprintf('OPTIONAL INPUT:\n');
-%         fprintf('\t-h: show this help message and exit\n');
-%         fprintf('\t-s: server, i.e. IP address or name (def.: %s)\n', ServerAddress);
-%         fprintf('\t-k: API key; contact IS Discovery administrator for your API key (def.: API key of Martin)\n');
-%         return;
-%     end
-%     argIdx = argIdx + 1;
-%     if argIdx > optargin
-%         % For the time being, all tags come with a single argument. Here,
-%         % the argument was not provided.
-%         error('DemoISD_HTTP_REST: missing argument to command line argument "%s"!', optionName);
-%     end
-%     optionValue = varargin{argIdx};
-%     argIdx = argIdx + 1;        % increment to next loop
-%     % analyse tag (one may introduce type checking here, but for now ...)
-%     switch optionName
-%         case {'-s' '--server'}
-%             ServerAddress = optionValue;
-%         case {'-k' '--key'}
-%             myApiKey = optionValue;
-%         otherwise
-%             error('DemoISD_HTTP_REST: unknown command line argument "%s"!', optionName);
-%     end
-% end
-
+ServerAddress = '172.23.202.191';  % ISD instance at Yale
 urlServer = ['http://' ServerAddress];
-if isempty(myApiKey)
-    % set default for API key since user did not supply one as command line
-    % argument
-    switch ServerAddress
-        case {'172.23.202.191'}
-            myApiKey = '49eb1753-29bb-465c-8961-226da340b5a9';
-        otherwise
-            error('no known API key for server %s', ServerAddress);
-    end
-end
-
+myApiKey = '49eb1753-29bb-465c-8961-226da340b5a9';
 % local folder to store binary data retrieved from server
-prefix_data_path = 'd:/DiscoveryData/';
+% prefix_data_path = 'D:/DiscoveryData/';
 
 %% select patient
-
 % get patient information
 jsonPatientsInfo = isdRestGetPatientsInfo(urlServer,myApiKey);
 % convert JSON structs to human readable form for selection dialog
-promptStr = 'Patient Name | Date of Birth | Gender | Number of Studies | Patient ID';
+promptStr = 'Patient ID | Number of Studies';
 nPat = numel(jsonPatientsInfo);
 listStrings = cell(nPat,1);
 for idx=1:nPat
-    DoB = jsonPatientsInfo{idx}.MainDicomTags.PatientBirthDate;
-    if length(DoB) == 8
-        DoB = [ DoB(1:4) '-' DoB(5:6) '-' DoB(7:8)];
-    end
-    listStrings{idx} = sprintf('%s | %s | %s | %d | %s', ...
-        jsonPatientsInfo{idx}.MainDicomTags.PatientName, DoB, ...
-        jsonPatientsInfo{idx}.MainDicomTags.PatientSex, ...
-        numel(jsonPatientsInfo{idx}.Studies), ...
-        jsonPatientsInfo{idx}.MainDicomTags.PatientID);
+    listStrings{idx} = sprintf('%s | %d', ...
+        jsonPatientsInfo{idx}.MainDicomTags.PatientID, ...
+        numel(jsonPatientsInfo{idx}.Studies));
 end
 % let user select the patient
 [selPat, ok] = listdlg('ListString',listStrings, ...
@@ -112,50 +55,14 @@ if ok
                     );
 end
 
-%% select series           
+%% select series
 if ok
-    % user did not cancel:
-    % continue by retrieving series information of selected study
-    jsonSeriesInfo = isdRestGetSeriesInfo(urlServer,myApiKey,jsonStudiesInfo{sel});
-    
-    % convert JSON structs to human readable form for selection dialog
-    promptStr = 'Modality | Series Number | Series Description | Series Time | Number of Images | Series Date';
-    nSeries = numel(jsonSeriesInfo);
-    listStrings = cell(nSeries,1);
-    for idx = 1:nSeries
-        % introduce separator string in case of multiple modalities (e.g. PET/CT) 
-        seriesTime = jsonSeriesInfo{idx}.MainDicomTags.SeriesTime;
-        if length(seriesTime) >= 6
-            if length(seriesTime) > 6
-                splitSecond = ['.' seriesTime(7:end)];
-            else
-                splitSecond = '';
-            end
-            seriesTime = [seriesTime(1:2) ':' seriesTime(3:4) ':' seriesTime(5:6) splitSecond];
-        end
-        seriesDate = jsonSeriesInfo{idx}.MainDicomTags.SeriesDate;
-        if length(seriesDate) == 8
-            seriesDate = [seriesDate(1:4) '-' seriesDate(5:6) '-' seriesDate(7:8)];
-        end
-        listStrings{idx} = sprintf('%s | %s | %s | %s | %d | %s',...
-            jsonSeriesInfo{idx}.MainDicomTags.Modality, ...
-            jsonSeriesInfo{idx}.MainDicomTags.SeriesNumber, ...
-            jsonSeriesInfo{idx}.MainDicomTags.SeriesDescription, ...
-            seriesTime, ...
-            jsonSeriesInfo{idx}.ExpectedNumberofInstances, ...
-            seriesDate);
-    end
-    [sel, ok] = listdlg('ListString',listStrings, ...
-                    'PromptString', promptStr,...
-                    'Name', 'Series list', ...
-                    'SelectionMode','single',...
-                    'ListSize', [500, 300] ...
-                    );
+    get_ISD_series(jsonStudiesInfo{sel})
 end
 
 
 %% select VOIs
-if size(varargin,2) > 0 & varargin{1} == 'mask'
+if ok & size(varargin,2) > 0 & varargin{1} == 'mask'
     % user did not cancel:
     % continue by retrieving series information of selected study
     jsonVOIsInfo = isdRestGetVOIsInfo(urlServer,myApiKey, jsonSeriesInfo{sel});
