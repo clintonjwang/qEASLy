@@ -5,8 +5,8 @@ if ~fast_ver
         'of the parenchyma volume of interest (also known as qEASLy). '...
         'It requires registered pre-contrast and arterial phase abdominal '...
         'MRIs (in nifti format) along with the whole liver and tumor masks '...
-        '(in .ics/.ids format). It outputs a mask of the enhancing tumor (in '...
-        '.ics/.ids format) as well as its volume. Only ICS version 1 is supported. '...
+        '(in .ics/.ids format). It outputs masks of the enhancing tumor '...
+        'and necrosis and displays enhancing volume. Only ICS version 1 is supported. '...
         'The program asks you to select a patient folder to look for the '...
         'MRIs/masks in. If it cannot find a file automatically, it will '...
         'prompt you for it.'], 'qEASLy utility', 'modal'));
@@ -15,8 +15,8 @@ end
 addpath(genpath('./utils'));
 
 % Obtain MRIs and masks
-search_path = '../data/5989645';
-% search_path = uigetdir('', 'Select patient folder to search in');
+% search_path = '../data/5989645';
+search_path = uigetdir('', 'Select patient folder to search in');
 data = load_nifti_liver(search_path);
 % Run qEASLy
 [roi_mode, median_std] = qeasly_func(data.art, data.pre, data.liver_mask);
@@ -29,10 +29,10 @@ data = load_nifti_liver(search_path);
 if fast_ver
     save_dir = '.';
 else
-    save_dir = uigetdir('', 'Select folder to save enhancing tumor mask in');
+    save_dir = uigetdir('', 'Select folder to save tumor masks in');
 end
 
-write_ids_mask(enh_mask, search_path, 'enh', 'viable_tumor');
+write_ids_mask(enh_mask, search_path, save_dir, 'viable_tumor');
 write_ids_mask(nec_mask, search_path, save_dir, 'necrosis');
 
 % Print results to screen.
