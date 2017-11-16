@@ -2,7 +2,6 @@ function output_path = try_find_file( path, pattern, msg, allowed_extensions, ge
 %TRY_FIND_FILE Tries to find a file matching a given pattern in path.
 %   Otherwise, prompts the user to select a file matching
 %   allowed_extensions, with a dialog box containing msg.
-%   Returns 0 if cancelled.
 
 if nargin < 5
     get_first = false;
@@ -21,11 +20,7 @@ else
     cwd=pwd();
     cd(path);
     [fname,outpath] = uigetfile(allowed_extensions, msg);
-    if isequal(fname, 0)
-        output_path = 0;
-    else
-        output_path = [outpath,fname];
-    end
+    output_path = [outpath,fname];
     cd(cwd);
 end
 end

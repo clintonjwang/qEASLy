@@ -1,4 +1,4 @@
-function [tumor_volume, enhancing_volume, enh_mask] = get_enhance_vol(pre,...
+function [tumor_volume, enhancing_volume, enh_mask, nec_mask] = get_enhance_vol(pre,...
     art, tumor_mask, dimension, intensity_mode, median_std, draw, out_file_name, slice)
 % Given an arterial phase, a pre-contrast phase, a liver tumor mask and a
 % threshold, this function returns the volume of tumor that passes the
@@ -20,6 +20,7 @@ function [tumor_volume, enhancing_volume, enh_mask] = get_enhance_vol(pre,...
     tumor_voxel_values = diff(tumor_voxels);
     passing_cutoff = tumor_voxel_values >= cutoff;
     enh_mask = diff >= cutoff & ~isnan(diff);
+    nec_mask = diff < cutoff & ~isnan(diff);
     
     single_voxel_volume = dimension(2) * dimension(3) * dimension(4) / 1000.0;
     enhancing_volume = sum(passing_cutoff(:)) * single_voxel_volume;
