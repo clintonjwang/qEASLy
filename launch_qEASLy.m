@@ -1,4 +1,11 @@
-fast_ver = true;
+function launch_qEASLy(fast_ver)
+%launch_qEASLy entry point for qEASLy.
+% Requires registered pre-contrast nifti, arterial nifti, whole liver mask,
+% and tumor mask.
+
+if nargin < 1
+    fast_ver = true;
+end
 
 if ~fast_ver
     uiwait(msgbox(['This program performs qEASL with automatic selection '...
@@ -15,8 +22,12 @@ end
 addpath(genpath('./utils'));
 
 % Obtain MRIs and masks
-% search_path = '../data/5989645';
-search_path = uigetdir('', 'Select patient folder to search in');
+if fast_ver
+    search_path = 'Z:\Isa\3';
+else
+    search_path = uigetdir('', 'Select patient folder to search in');
+end
+
 data = load_nifti_liver(search_path);
 % Run qEASLy
 [roi_mode, median_std] = qeasly_func(data.art, data.pre, data.liver_mask);
@@ -47,3 +58,10 @@ else
 end
 
 fclose('all');
+% if ~fast_ver
+mask_names = {'viable_tumor', 'necrosis'};
+mask_display_names = {'viable tumor', 'necrosis'};
+display_scrolling_mask('20s', search_path, save_dir, mask_names, mask_display_names);
+% end
+
+end
