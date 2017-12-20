@@ -1,15 +1,21 @@
 function launch_qEASLy(fast_ver)
 %launch_qEASLy entry point for qEASLy.
+% Aaron A. Minutes to seconds: A fully automated method for quantitative 3D tumor
+% enhancement analysis based on contrast-enhanced MR imaging.
+
 % Requires registered pre-contrast nifti, arterial nifti, whole liver mask,
 % and tumor mask.
+
+addpath(genpath('./utils'));
 
 if nargin < 1
     fast_ver = true;
 end
 
 if ~fast_ver
-    uiwait(msgbox(['This program performs qEASL with automatic selection '...
-        'of the parenchyma volume of interest (also known as qEASLy). '...
+    uiwait(msgbox(['This program performs automatic qEASL (also known as qEASLy). '...
+        'It segments a tumor into necrotic and enhancing regions based on their enhancement relative '...
+        'to a volume of interest in the parenchyma. '...
         'It requires registered pre-contrast and arterial phase abdominal '...
         'MRIs (in nifti format) along with the whole liver and tumor masks '...
         '(in .ics/.ids format). It outputs masks of the enhancing tumor '...
@@ -18,12 +24,25 @@ if ~fast_ver
         'MRIs/masks in. If it cannot find a file automatically, it will '...
         'prompt you for it.'], 'qEASLy utility', 'modal'));
 end
-    
-addpath(genpath('./utils'));
+
+% mode = questdlg('If you have BL and FU imaging as subfolders',title,...
+%     'Single patient','Batch mode','Use CSV','Single patient');
+% switch mode
+%     case 'Single patient'
+%         single_mode = true;
+%     case 'Batch mode'
+%         single_mode = false;
+%     case 0
+%         return
+% end
 
 % Obtain MRIs and masks
 if fast_ver
-    search_path = 'Z:\Isa\3';
+    if true%single_mode
+        search_path = 'Z:\Isa\3';
+    else
+        search_path = 'Z:\Isa';
+    end
 else
     search_path = uigetdir('', 'Select patient folder to search in');
 end
