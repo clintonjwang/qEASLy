@@ -1,7 +1,7 @@
 function [roi_mode, median_std] = qeasly_func(art, pre, liver_mask)
 %QEASLY_FUNC Selects parechyma ROI
 
-    diff = art - pre;
+    diff = double(art - pre);
     
     diff(liver_mask == 0) = NaN;
     sz = size(diff);
@@ -28,8 +28,6 @@ function [roi_mode, median_std] = qeasly_func(art, pre, liver_mask)
             end
         end
     end
-    disp(min(local_stds));
-    disp(max(local_stds));
     
     local_stds = local_stds(local_stds > 0);
     median_std = median(local_stds);

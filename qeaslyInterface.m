@@ -3,12 +3,13 @@ function [ status, message, outputVolumes ] = qeaslyInterface( inputVolumes )
 %   Detailed explanation goes here
 
 status = false;
+dims = inputVolumes{1}{1}.NumberOfVoxels';
 data = struct;
-data.dim = inputVolumes{1}{1}.VolumeExtent ./ inputVolumes{1}{1}.NumberOfVoxels;
-data.pre = inputVolumes{1}{3};
-data.art = inputVolumes{2}{3};
-data.liver_mask = inputVolumes{3}{3};
-data.tumor_mask = inputVolumes{4}{3};
+data.dim = [1; inputVolumes{1}{1}.VolumeExtent ./ double(inputVolumes{1}{1}.NumberOfVoxels)];
+data.pre = reshape(inputVolumes{1}{3}, dims);
+data.art = reshape(inputVolumes{2}{3}, dims);
+data.liver_mask = reshape(inputVolumes{3}{3}, dims);
+data.tumor_mask = reshape(inputVolumes{4}{3}, dims);
 
 % search_path = inputParams.search_path; %path to look for template mask file
 % save_dir = inputParams.save_dir; %path to save mask file
@@ -18,8 +19,7 @@ data.tumor_mask = inputVolumes{4}{3};
 
 % Get enhancing tumor volume
 [tumor_volume, std_median_enh_vol, enh_mask, nec_mask] = get_enhance_vol(data.pre,...
-    data.art, data.tumor_mask, data.dim, roi_mode, median_std, 0,...
-    'output', int8(length(data.art(1,1,:)) / 2));
+    data.art, data.tumor_mask, data.dim, roi_mode, median_std);
 
 % write_ids_mask(enh_mask, search_path, save_dir, 'viable_tumor');
 % write_ids_mask(nec_mask, search_path, save_dir, 'necrosis');

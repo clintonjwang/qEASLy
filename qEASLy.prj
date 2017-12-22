@@ -4,7 +4,7 @@
     <param.icon />
     <param.icons />
     <param.version>1.0</param.version>
-    <param.authnamewatermark>Clinton Wang</param.authnamewatermark>
+    <param.authnamewatermark>Clinton Wang, Aaron Abajian</param.authnamewatermark>
     <param.email />
     <param.company />
     <param.summary />
@@ -95,24 +95,18 @@
     <fileset.exports>
       <file>${PROJECT_ROOT}\flip_image.m</file>
       <file>${PROJECT_ROOT}\get_enhance_vol.m</file>
-      <file>${PROJECT_ROOT}\get_mask.m</file>
       <file>${PROJECT_ROOT}\qeasly_func.m</file>
       <file>${PROJECT_ROOT}\qeaslyInterface.m</file>
       <file>${PROJECT_ROOT}\transpose_mask_slices.m</file>
-      <file>${PROJECT_ROOT}\try_find_file.m</file>
-      <file>${PROJECT_ROOT}\write_ids_mask.m</file>
     </fileset.exports>
     <fileset.classes>
       <entity.package name="">
         <entity.class name="Class1">
           <file>${PROJECT_ROOT}\flip_image.m</file>
           <file>${PROJECT_ROOT}\get_enhance_vol.m</file>
-          <file>${PROJECT_ROOT}\get_mask.m</file>
           <file>${PROJECT_ROOT}\qeasly_func.m</file>
           <file>${PROJECT_ROOT}\qeaslyInterface.m</file>
           <file>${PROJECT_ROOT}\transpose_mask_slices.m</file>
-          <file>${PROJECT_ROOT}\try_find_file.m</file>
-          <file>${PROJECT_ROOT}\write_ids_mask.m</file>
         </entity.class>
       </entity.package>
     </fileset.classes>

@@ -1,15 +1,13 @@
 //
 // MATLAB Compiler: 6.4 (R2017a)
-// Date: Wed Dec 20 10:24:35 2017
+// Date: Thu Dec 21 18:21:38 2017
 // Arguments:
 // "-B""macro_default""-W""cpplib:qEASLy""-T""link:lib""-d""C:\Users\Clinton\Doc
 // uments\MATLAB\qEASLy\qEASLy\for_testing""-v""C:\Users\Clinton\Documents\MATLA
 // B\qEASLy\flip_image.m""C:\Users\Clinton\Documents\MATLAB\qEASLy\get_enhance_v
-// ol.m""C:\Users\Clinton\Documents\MATLAB\qEASLy\get_mask.m""C:\Users\Clinton\D
-// ocuments\MATLAB\qEASLy\qeasly_func.m""C:\Users\Clinton\Documents\MATLAB\qEASL
-// y\qeaslyInterface.m""C:\Users\Clinton\Documents\MATLAB\qEASLy\transpose_mask_
-// slices.m""C:\Users\Clinton\Documents\MATLAB\qEASLy\try_find_file.m""C:\Users\
-// Clinton\Documents\MATLAB\qEASLy\write_ids_mask.m"
+// ol.m""C:\Users\Clinton\Documents\MATLAB\qEASLy\qeasly_func.m""C:\Users\Clinto
+// n\Documents\MATLAB\qEASLy\qeaslyInterface.m""C:\Users\Clinton\Documents\MATLA
+// B\qEASLy\transpose_mask_slices.m"
 //
 
 #include <stdio.h>
@@ -150,12 +148,6 @@ bool MW_CALL_CONV mlxGet_enhance_vol(int nlhs, mxArray *plhs[], int nrhs, mxArra
 }
 
 LIB_qEASLy_C_API 
-bool MW_CALL_CONV mlxGet_mask(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
-{
-  return mclFeval(_mcr_inst, "get_mask", nlhs, plhs, nrhs, prhs);
-}
-
-LIB_qEASLy_C_API 
 bool MW_CALL_CONV mlxQeasly_func(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
 {
   return mclFeval(_mcr_inst, "qeasly_func", nlhs, plhs, nrhs, prhs);
@@ -174,18 +166,6 @@ bool MW_CALL_CONV mlxTranspose_mask_slices(int nlhs, mxArray *plhs[], int nrhs, 
   return mclFeval(_mcr_inst, "transpose_mask_slices", nlhs, plhs, nrhs, prhs);
 }
 
-LIB_qEASLy_C_API 
-bool MW_CALL_CONV mlxTry_find_file(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
-{
-  return mclFeval(_mcr_inst, "try_find_file", nlhs, plhs, nrhs, prhs);
-}
-
-LIB_qEASLy_C_API 
-bool MW_CALL_CONV mlxWrite_ids_mask(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
-{
-  return mclFeval(_mcr_inst, "write_ids_mask", nlhs, plhs, nrhs, prhs);
-}
-
 LIB_qEASLy_CPP_API 
 void MW_CALL_CONV flip_image(int nargout, mwArray& image_o, const mwArray& image)
 {
@@ -193,22 +173,13 @@ void MW_CALL_CONV flip_image(int nargout, mwArray& image_o, const mwArray& image
 }
 
 LIB_qEASLy_CPP_API 
-void MW_CALL_CONV get_enhance_vol(int nargout, mwArray& tumor_volume, mwArray& 
-                                  enhancing_volume, mwArray& enh_mask, mwArray& nec_mask, 
+void MW_CALL_CONV get_enhance_vol(int nargout, mwArray& tumor_vol, mwArray& 
+                                  enhancing_vol, mwArray& enh_mask, mwArray& nec_mask, 
                                   const mwArray& pre, const mwArray& art, const mwArray& 
-                                  tumor_mask, const mwArray& dimension, const mwArray& 
-                                  intensity_mode, const mwArray& median_std, const 
-                                  mwArray& draw, const mwArray& out_file_name, const 
-                                  mwArray& slice)
+                                  tumor_mask, const mwArray& vox_dims, const mwArray& 
+                                  intensity_mode, const mwArray& median_std)
 {
-  mclcppMlfFeval(_mcr_inst, "get_enhance_vol", nargout, 4, 9, &tumor_volume, &enhancing_volume, &enh_mask, &nec_mask, &pre, &art, &tumor_mask, &dimension, &intensity_mode, &median_std, &draw, &out_file_name, &slice);
-}
-
-LIB_qEASLy_CPP_API 
-void MW_CALL_CONV get_mask(int nargout, mwArray& mask, const mwArray& fpath, const 
-                           mwArray& N1, const mwArray& N2, const mwArray& N3)
-{
-  mclcppMlfFeval(_mcr_inst, "get_mask", nargout, 1, 4, &mask, &fpath, &N1, &N2, &N3);
+  mclcppMlfFeval(_mcr_inst, "get_enhance_vol", nargout, 4, 6, &tumor_vol, &enhancing_vol, &enh_mask, &nec_mask, &pre, &art, &tumor_mask, &vox_dims, &intensity_mode, &median_std);
 }
 
 LIB_qEASLy_CPP_API 
@@ -230,20 +201,5 @@ void MW_CALL_CONV transpose_mask_slices(int nargout, mwArray& out_mask, const mw
                                         mask, const mwArray& mode)
 {
   mclcppMlfFeval(_mcr_inst, "transpose_mask_slices", nargout, 1, 2, &out_mask, &mask, &mode);
-}
-
-LIB_qEASLy_CPP_API 
-void MW_CALL_CONV try_find_file(int nargout, mwArray& output_path, const mwArray& path, 
-                                const mwArray& pattern, const mwArray& msg, const 
-                                mwArray& allowed_extensions, const mwArray& get_first)
-{
-  mclcppMlfFeval(_mcr_inst, "try_find_file", nargout, 1, 5, &output_path, &path, &pattern, &msg, &allowed_extensions, &get_first);
-}
-
-LIB_qEASLy_CPP_API 
-void MW_CALL_CONV write_ids_mask(const mwArray& enh_mask, const mwArray& search_path, 
-                                 const mwArray& save_dir, const mwArray& name)
-{
-  mclcppMlfFeval(_mcr_inst, "write_ids_mask", 0, 0, 4, &enh_mask, &search_path, &save_dir, &name);
 }
 

@@ -4,10 +4,7 @@ qEASLyTerminate
 qEASLyPrintStackTrace
 mlxFlip_image
 mlxGet_enhance_vol
-mlxGet_mask
 mlxQeasly_func
 mlxQeaslyInterface
 mlxTranspose_mask_slices
-mlxTry_find_file
-mlxWrite_ids_mask
 
