@@ -2,14 +2,13 @@ function launch_qEASLy(nogui)
 %launch_qEASLy entry point for qEASLy.
 % Aaron Abajian. Minutes to seconds: A fully automated method for quantitative 3D tumor
 % enhancement analysis based on contrast-enhanced MR imaging.
-
 % Requires registered pre-contrast nifti, arterial nifti, whole liver mask,
 % and tumor mask.
 
     addpath(genpath('../subroutines'));
 
     if nargin < 1
-        nogui = true;
+        nogui = false;
     end
 
     if ~nogui
@@ -24,17 +23,12 @@ function launch_qEASLy(nogui)
             'MRIs/masks in. If it cannot find a file automatically, it will '...
             'prompt you for it.'], 'qEASLy utility', 'modal'));
     end
-
-    % mode = questdlg('If you have BL and FU imaging as subfolders',title,...
-    %     'Single patient','Batch mode','Use CSV','Single patient');
-    % switch mode
-    %     case 'Single patient'
-    %         single_mode = true;
-    %     case 'Batch mode'
-    %         single_mode = false;
-    %     case 0
-    %         return
-    % end
+    
+    filename_map = containers.Map;
+    filename_map('pre') = '**/pre_reg.nii*';
+    filename_map('art') = '**/20s.nii*';
+    filename_map('liver_seg') = '**/*liver.ids';
+    filename_map('tumor_seg') = '**/*tumor*.ids';
 
     % Obtain MRIs and masks
     if nogui
@@ -47,7 +41,7 @@ function launch_qEASLy(nogui)
         search_path = uigetdir('', 'Select patient folder to search in');
     end
 
-    data = load_nifti_liver(search_path);
+    data = load_niis(search_path, filename_map);
     % Run qEASLy
     [roi_mode, median_std] = qeasly_func(data.art, data.pre, data.liver_mask);
     % Get enhancing tumor volume
@@ -77,9 +71,9 @@ function launch_qEASLy(nogui)
 
     fclose('all');
     % if ~fast_ver
-    mask_names = {'viable_tumor', 'necrosis'};
-    mask_display_names = {'viable tumor', 'necrosis'};
-    display_scrolling_mask('20s', search_path, save_dir, mask_names, mask_display_names);
+%     mask_names = {'viable_tumor', 'necrosis'};
+%     mask_display_names = {'viable tumor', 'necrosis'};
+%     display_scrolling_mask('20s', search_path, save_dir, mask_names, mask_display_names);
     % end
 
 end
