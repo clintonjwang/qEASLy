@@ -10,38 +10,36 @@ function launch_qEASLy(nogui)
     if nargin < 1
         nogui = false;
     end
-
-    if ~nogui
-        uiwait(msgbox(['This program performs automatic qEASL (also known as qEASLy). '...
-            'It segments a tumor into necrotic and enhancing regions based on their enhancement relative '...
-            'to a volume of interest in the parenchyma. '...
-            'It requires registered pre-contrast and arterial phase abdominal '...
-            'MRIs (in nifti format) along with the whole liver and tumor masks '...
-            '(in .ics/.ids format). It outputs masks of the enhancing tumor '...
-            'and necrosis and displays enhancing volume. Only ICS version 1 is supported. '...
-            'The program asks you to select a patient folder to look for the '...
-            'MRIs/masks in. If it cannot find a file automatically, it will '...
-            'prompt you for it.'], 'qEASLy utility', 'modal'));
-    end
     
-    filename_map = containers.Map;
-    filename_map('pre') = '**/pre_reg.nii*';
-    filename_map('art') = '**/20s.nii*';
-    filename_map('liver_seg') = '**/*liver.ids';
-    filename_map('tumor_seg') = '**/*tumor*.ids';
+    filename_map = load_config(try_find_file(pwd(), '**/config.txt', ...
+        'Select the config file.', {'.txt'}));
+    
+%     switch button
+%         case 'NIFTI'
+%             filename_map('pre') = '**/pre_reg.nii*';
+%             filename_map('art') = '**/20s.nii*';
+%             filename_map('liver_seg') = '**/*liver.ids';
+%             filename_map('tumor_seg') = '**/*tumor*.ids';
+%         case 'DICOM'
+%             filename_map('pre') = '**/T1_BL';
+%             filename_map('art') = '**/T1_AP';
+%             filename_map('liver_seg') = '**/*liver.ids';
+%             filename_map('tumor_seg') = '**/*tumor*.ids';
+%         case ''
+%             return
+%     end
 
     % Obtain MRIs and masks
-    if nogui
-        if true%single_mode
-            search_path = 'Z:\Isa\3';
-        else
-            search_path = 'Z:\Isa';
-        end
+%     if nogui
+%         search_path = 'Z:\Isa';
+%     else
+%         search_path = uigetdir('', 'Select patient folder to search in');
+%     end
+    if contains(filename_map('pre'), '.nii')
+        data = load_niis(filename_map);
     else
-        search_path = uigetdir('', 'Select patient folder to search in');
+        data = load_dcms(filename_map);
     end
-
-    data = load_niis(search_path, filename_map);
     % Run qEASLy
     [roi_mode, median_std] = qeasly_func(data.art, data.pre, data.liver_mask);
     % Get enhancing tumor volume
@@ -49,14 +47,15 @@ function launch_qEASLy(nogui)
         data.art, data.tumor_mask, data.dim, roi_mode, median_std);
 
     % Save mask
-    if nogui
-        save_dir = '.';
-    else
-        save_dir = uigetdir('', 'Select folder to save tumor masks in');
-    end
+    [~,~,~] = mkdir(filename_map('output'));
+%     if nogui
+%         save_dir = '.';
+%     else
+%         save_dir = uigetdir('', 'Select folder to save tumor masks in');
+%     end
 
-    write_ids_mask(enh_mask, search_path, save_dir, 'viable_tumor');
-    write_ids_mask(nec_mask, search_path, save_dir, 'necrosis');
+    write_ids_mask(enh_mask, filename_map('liver_seg'), filename_map('output'), 'viable_tumor');
+    write_ids_mask(nec_mask, filename_map('liver_seg'), filename_map('output'), 'necrosis');
 
     % Print results to screen.
     if nogui
